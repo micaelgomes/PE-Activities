@@ -4,8 +4,9 @@
 
 import numpy as np
 
+
 class Matriz:
-    def __init__(self): 
+    def __init__(self):
         self.mat = np.loadtxt('mat')
 
     def getMat(self):
@@ -24,14 +25,28 @@ class Matriz:
 
         return True
 
+
 def prob_1_visit(mat, ei, ef, n):
-    if n == 1 :
+    if n == 1:
         return mat[ei][ef]
-    else: 
+    else:
         value = 0
         for k in range(len(mat)):
-            if k != ef :
+            if k != ef:
                 value += mat[ei][k] * prob_1_visit(mat, k, ef, n-1)
+
+        return value
+
+
+def time_1_visit(mat, ei, ef, n):
+    if n == 0:
+        return 1
+    elif n == 1:
+        return mat[ei][ef]
+    else:
+        value = 0
+        for m in range(1,n+1):
+            value += prob_1_visit(mat, ei, ef, m) * time_1_visit(mat, ef, ef, n-m)
 
         return value
 
@@ -43,10 +58,11 @@ def main():
         ei = int(input("insira o estado inicial: "))
         ef = int(input("insira o estado final: "))
         n = int(input("insira o Nº de Passos: "))
-        print(prob_1_visit(mat, ei, ef, n))
+        print(time_1_visit(mat, ei, ef, n))
 
     else:
-        print("Não é estocástico!")        
+        print("Não é estocástico!")
+
 
 # Local Testes
 if __name__ == '__main__':
