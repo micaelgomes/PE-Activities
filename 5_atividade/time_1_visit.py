@@ -1,6 +1,6 @@
 # Micael Machado Gomes
 ## Trabalho de Processos Estocásticos
-## Determinação da probabilidade de 1ª visita
+## Determinação da Tempo de 1ª visita
 
 import numpy as np
 
