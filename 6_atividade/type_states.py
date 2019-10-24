@@ -47,6 +47,7 @@ def comunicable(mat):
         for j in range(len(mat[i])):
             if(mat[i][j] > 0 and mat[j][i] > 0):
                 print(j, end=', ')
+                qtd = qtd + 1
 
         print('}')
 
@@ -61,8 +62,14 @@ def main():
         resul = np.dot(mat, resul)
 
         print(resul, '\n')
-        acessible(resul)
-        comunicable(resul)
+        acc = acessible(resul)
+        com = comunicable(resul)
+
+        out = com - acc
+        if out <= 1:
+            print('possui 1 classe')
+        else:
+            print('possui', out, 'classes')
 
     else:
         print("Não é estocástico!")      
