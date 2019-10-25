@@ -25,33 +25,40 @@ class Matriz:
 
         return True
 
-def acessible(mat):
-    qtd = 0
+
+def acessible(mat, visit, start, end):
+    path = 0
+
+    if mat[start][end] > 0:
+        return 1
+
+    elif not start in visit:
+        visit.append(start)
+
+        for j in range(len(mat[start])):
+            if mat[start][j] > 0:
+                path += acessible(mat, visit, j, end)
+
+    return path
+
+def findClass(mat):
+    visit = []
+    clss = []  # classes da cadeia
 
     for i in range(len(mat)):
-        print(i, ' é acessível a partir de: {', end='')
-        for j in range(len(mat[i])):
-            if(mat[i][j] > 0):
-                print(j, end=', ')
-                qtd = qtd + 1
+        tmp = set()
+        if not i in visit:
+            tmp.add(i)
 
-        print('}') 
+            for j in range(len(mat[i])):
+                if i != j:
+                    if acessible(mat, [], i, j) and acessible(mat, [], j, i) > 0 and not j in tmp:
+                        tmp.add(j)
+                        visit.append(j)
 
-    return qtd
+            clss.append(tmp)
 
-def comunicable(mat):
-    qtd = 0
-
-    for i in range(len(mat)):
-        print(i, ' é comunicante com: {', end='')
-        for j in range(len(mat[i])):
-            if(mat[i][j] > 0 and mat[j][i] > 0):
-                print(j, end=', ')
-                qtd = qtd + 1
-
-        print('}')
-
-    return qtd
+    return clss
 
 def main():
     matriz = Matriz()
@@ -59,17 +66,25 @@ def main():
 
     if matriz.isStochastic():
         resul = mat
-        resul = np.dot(mat, resul)
+        
+        for _ in range(100):
+            resul = np.dot(resul, resul)
 
-        print(resul, '\n')
-        acc = acessible(resul)
-        com = comunicable(resul)
+        # print(resul, '\n')
+        print('Estados Acessíveis: ')
+        for i in range(len(resul)):
+            for j in range(len(resul[i])):
+                if acessible(resul, [], i, j):
+                    print(i, ' -> ', j)
+        
+        print('Estados Comunicantes: ')
+        for i in range(len(resul)):
+            for j in range(i, len(resul[i])):
+                if acessible(resul, [], i, j) and acessible(resul, [], j, i):
+                    print(i, ' <-> ', j)
 
-        out = com - acc
-        if out <= 1:
-            print('possui 1 classe')
-        else:
-            print('possui', out, 'classes')
+        clss = findClass(resul)
+        print('Quantidade de Classes: ', len(clss))
 
     else:
         print("Não é estocástico!")      

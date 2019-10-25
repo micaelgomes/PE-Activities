@@ -44,9 +44,10 @@ def func_acc(mat, visit, start, end):
 
 def transiente(mat):
     out = []
+
     for i in range(len(mat)):
         for j in range(len(mat[i])):
-            if i != j and mat[i][j] > 0 : 
+            if i != j and mat[i][j] > 0 and mat[j][i] < 1: 
                 if not i in out:
                     out.append(i)
     
@@ -88,27 +89,55 @@ def findClass(mat):
                 if i != j:
                     if func_acc(mat, [], i, j) and func_acc(mat, [], j, i) > 0 and not j in tmp:
                         tmp.add(j)
+                        visit.append(j)
 
             clss.append(tmp)
 
     return clss
+
+def findZero(mat):
+    for i in range(len(mat)):
+        for j in range(len(mat[i])):
+            if mat[i][j] == 0:
+                return True
+
+    return False
 
 def main():
     matriz = Matriz()
     mat = np.array(matriz.getMat())
 
     if matriz.isStochastic():
-        resul = mat
-        resul = np.dot(mat, resul)
+        resul = mat.copy()
+        # print(resul, '\n')
+
+        for _ in range(100):
+            resul = np.dot(resul, mat)
 
         print(resul, '\n')
-        # print('Estados Transientes: ', transiente(resul))
-        # print('Estados Absorventes: ', absorvente(resul))
-        # print('Estados Recorrentes: ', recorrente(resul))
+        print('Estados Transientes: ', transiente(resul))
+        print('Estados Recorrentes: ', recorrente(resul))
+        print('Estados Absorventes: ', absorvente(resul))
 
-        print(findClass(resul))
-
+        clss = findClass(resul)
+        # print(clss)
         # print(func_acc(mat, [], 4, 1))
+
+        print('\n')
+        print('Classes Transientes: ')
+        print('Classes Recorrentes: ')
+        print('Classes Absorventes: ')
+
+        print('\n')
+        if len(clss) == 1 :
+            print('\n\nCadeia é irredutível')
+        else:
+            print('Cadeia é Redutível')
+
+        if findZero(mat):
+            print('Cadeia é irregular')
+        else:
+            print('Cadeia é Regular')
 
     else:
         print("Não é estocástico!")      
