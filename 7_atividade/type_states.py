@@ -58,18 +58,37 @@ def recorrente(mat):
     
     return out
 
+def findClass(mat):
+    visit = []
+    clss = [] #classes da cadeia
+    
+    for i in range(len(mat)):
+        tmp = []
+        if not i in visit:
+            visit.append(i)
+
+            for j in range(len(mat[i])):    
+                if mat[i][j] > 0 and mat[j][i] > 0 and not j in visit:
+                    tmp.append(j)
+
+        clss.append(tmp)
+
+    return clss
+
 def main():
     matriz = Matriz()
     mat = np.array(matriz.getMat())
 
     if matriz.isStochastic():
         resul = mat
-        # resul = np.dot(mat, resul)
+        resul = np.dot(mat, resul)
 
         print(resul, '\n')
-        print('Estados Transientes: ', transiente(resul))
-        print('Estados Absorventes: ', absorvente(resul))
-        print('Estados Recorrentes: ', recorrente(resul))
+        # print('Estados Transientes: ', transiente(resul))
+        # print('Estados Absorventes: ', absorvente(resul))
+        # print('Estados Recorrentes: ', recorrente(resul))
+
+        print(findClass(resul))
 
     else:
         print("Não é estocástico!")      
