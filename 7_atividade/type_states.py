@@ -25,6 +25,23 @@ class Matriz:
 
         return True
 
+
+def func_acc(mat, visit, start, end):
+    path = 0
+
+    if mat[start][end] > 0:
+        return 1
+
+    elif not start in visit:
+        visit.append(start)
+
+        for j in range(len(mat[start])):
+            if mat[start][j] > 0:
+                path += func_acc(mat, visit, j, end)
+
+    return path
+            
+
 def transiente(mat):
     out = []
     for i in range(len(mat)):
@@ -60,18 +77,19 @@ def recorrente(mat):
 
 def findClass(mat):
     visit = []
-    clss = [] #classes da cadeia
-    
+    clss = []  # classes da cadeia
+
     for i in range(len(mat)):
-        tmp = []
+        tmp = set()
         if not i in visit:
-            visit.append(i)
+            tmp.add(i)
 
-            for j in range(len(mat[i])):    
-                if mat[i][j] > 0 and mat[j][i] > 0 and not j in visit:
-                    tmp.append(j)
+            for j in range(len(mat[i])):
+                if i != j:
+                    if func_acc(mat, [], i, j) and func_acc(mat, [], j, i) > 0 and not j in tmp:
+                        tmp.add(j)
 
-        clss.append(tmp)
+            clss.append(tmp)
 
     return clss
 
@@ -89,6 +107,8 @@ def main():
         # print('Estados Recorrentes: ', recorrente(resul))
 
         print(findClass(resul))
+
+        # print(func_acc(mat, [], 4, 1))
 
     else:
         print("Não é estocástico!")      
