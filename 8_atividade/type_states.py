@@ -1,9 +1,8 @@
 # Micael Machado Gomes
 ## Trabalho de Processos Estocásticos
-## Determinação da probabilidade de 1ª visita
 
 import numpy as np
-
+import math
 
 class Matriz:
     def __init__(self):
@@ -72,6 +71,35 @@ def recorrente(mat):
             out.append(i)
     
     return out
+
+def mdc(pss):
+    mdc = 1
+
+    for i in range(len(pss)):
+        mdc += math.gcd(1, pss[i])    
+
+    return 2
+
+def periodico(mat):
+    out = []
+    pss = []
+
+    for i in range(len(mat)):
+        if func_acc(mat, [], i, i):
+            for j in range(len(mat[i])):
+                indo = func_acc(mat, [], i, j)
+                vltnd = func_acc(mat, [], j, i)
+                
+                if indo and vltnd:
+                    pss.append(indo+vltnd)
+
+            if i not in out and mdc(pss) > 1:
+                out.append(i)
+
+    return out
+
+def ergodicos(mat):
+    pass
 
 def class_transiente(clss, mat):
     out = []
@@ -150,10 +178,12 @@ def main():
         for _ in range(100):
             resul = np.dot(resul, mat)
 
-        print(resul, '\n')
-        print('Estados Transientes: ', transiente(resul))
-        print('Estados Recorrentes: ', recorrente(resul))
-        print('Estados Absorventes: ', absorvente(resul))
+        # print(resul, '\n')
+        # print('Estados Transientes: ', transiente(resul))
+        # print('Estados Recorrentes: ', recorrente(resul))
+        # print('Estados Absorventes: ', absorvente(resul))
+        print('Estados Periódicos: ', periodico(resul))
+        print('Estados Ergódicos: ', ergodicos(resul))
 
         clss = findClass(resul)
         
@@ -161,16 +191,7 @@ def main():
         print('Classes Recorrentes: ', class_recorrente(clss, resul))
         print('Classes Absorventes: ', class_absorvente(clss, resul))
 
-        if len(clss) == 1 :
-            print('\n\nCadeia é irredutível')
-        else:
-            print('Cadeia é Redutível')
-
-        if findZero(mat):
-            print('Cadeia é irregular')
-        else:
-            print('Cadeia é Regular')
-
+        
     else:
         print("Não é estocástico!")      
 
