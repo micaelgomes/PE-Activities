@@ -76,7 +76,7 @@ def mdc(pss):
     mdc = 1
 
     for i in range(len(pss)):
-        mdc += math.gcd(1, pss[i])    
+        mdc = math.gcd(mdc, pss[i])    
 
     return 2
 
@@ -98,8 +98,26 @@ def periodico(mat):
 
     return out
 
+def aperiodico(mat):
+    out = []
+    perr = periodico(mat)
+
+    for i in range(len(mat)):
+        if i not in perr:
+            out.append(i)
+
+    return out
+
 def ergodicos(mat):
-    pass
+    out = []
+    recorr = recorrente(mat)
+    perr = periodico(mat)
+
+    for i in range(len(mat)):
+        if i in recorr and i not in perr:
+            out.append(i)
+
+    return out
 
 def class_transiente(clss, mat):
     out = []
@@ -136,6 +154,50 @@ def class_absorvente(clss, mat):
                 if mat[k][i] == 1:
                     if cl not in out:
                         out.append(cl)
+
+    return out
+
+def class_periodica(clss, mat):
+    out = []
+    perr = periodico(mat)
+
+    flag = True
+
+    for cl in clss:
+        for k in cl:
+            if k not in perr:
+                flag = False
+                break
+                
+        if flag:
+            out.append(cl)
+
+    return out
+
+def class_aperiodica(clss, mat):
+    out = []
+    clss_perr = class_periodica(clss, mat)
+
+    for cl in clss:
+        if cl not in clss_perr:
+            out.append(cl)
+
+    return out
+
+def class_ergodica(clss, mat):
+    out = []
+    ergod = ergodicos(mat)
+
+    flag = True
+
+    for cl in clss:
+        for k in cl:
+            if k not in ergod:
+                flag = False
+                break
+                
+        if flag:
+            out.append(cl)
 
     return out
 
@@ -183,13 +245,18 @@ def main():
         # print('Estados Recorrentes: ', recorrente(resul))
         # print('Estados Absorventes: ', absorvente(resul))
         print('Estados Periódicos: ', periodico(resul))
+        print('Estados Aperiódicos: ', aperiodico(resul))
         print('Estados Ergódicos: ', ergodicos(resul))
 
         clss = findClass(resul)
+        # print('classes:', clss)
         
-        print('Classes Transientes: ', class_transiente(clss, resul))
-        print('Classes Recorrentes: ', class_recorrente(clss, resul))
-        print('Classes Absorventes: ', class_absorvente(clss, resul))
+        # print('Classes Transientes: ', class_transiente(clss, resul))
+        # print('Classes Recorrentes: ', class_recorrente(clss, resul))
+        # print('Classes Absorventes: ', class_absorvente(clss, resul))
+        print('Classes Periódicas: ', class_periodica(clss, resul))
+        print('Classes Aperiódicas: ', class_aperiodica(clss, resul))
+        print('Classes Ergódicas: ', class_ergodica(clss, resul))
 
         
     else:
